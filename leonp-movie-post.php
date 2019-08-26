@@ -19,6 +19,8 @@ if (!class_exists('LeonP_MoviePost')) {
             add_action('admin_enqueue_scripts', array($this, 'enqueue_movie_admin_styles'));
             add_action('wp_enqueue_scripts', array($this, 'enqueue_movie_styles'));
 
+            add_shortcode('insert_movie_info_box', array($this, 'shortcode_insert_movie_info_box'));
+
             register_activation_hook(__FILE__, array($this, 'on_activate'));
             register_deactivation_hook(__FILE__, array($this, 'on_activate'));
         }
@@ -179,8 +181,28 @@ if (!class_exists('LeonP_MoviePost')) {
 
             if ($post_type == 'leonp_movie') {
 
-                $movie_html = '
-                <div class="leonp-movie-info-container">
+                $movie_html = $this->get_movie_info_box($post);
+
+                $content = $movie_html . $content;
+            }
+
+            return $content;
+        }
+        public function shortcode_insert_movie_info_box($atts = [], $content = '', $tag = '')
+        {
+            if (!isset($atts['movie_id'])) return "";
+
+            $movie_id = $atts['movie_id'];
+            $post = get_post($movie_id);
+
+            if(!$post) return "";
+
+            return $this->get_movie_info_box($post);
+        }
+
+        private function get_movie_info_box($post)
+        {
+            return '<div class="leonp-movie-info-container">
                 <h5>Movie information</h5>
                     <span class="leonp-movie-label">Movie title:</span> <span>' . get_post_meta($post->ID, '_leonp_movie_full_title', true) . '</span><br>
                     <span class="leonp-movie-label">Movie director:</span><span>' . get_post_meta($post->ID, '_leonp_movie_director', true) . '</span><br>
@@ -189,11 +211,6 @@ if (!class_exists('LeonP_MoviePost')) {
                     <span class="leonp-movie-label">Movie main roles:</span><span>' . get_post_meta($post->ID, '_leonp_movie_main_roles', true) . '</span><br>
                     <span class="leonp-movie-label">Movie plot:</span><span>' . get_post_meta($post->ID, '_leonp_movie_plot', true) . '</span><br>
                 </div>';
-
-                $content = $movie_html . $content;
-            }
-
-            return $content;
         }
 
         private function on_activate()
@@ -202,7 +219,8 @@ if (!class_exists('LeonP_MoviePost')) {
             flush_rewrite_rules();
         }
 
-        public function on_deactivate(){
+        public function on_deactivate()
+        {
             flush_rewrite_rules();
         }
     }
