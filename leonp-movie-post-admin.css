@@ -1,0 +1,24 @@
+.leonp-movie-input-label {
+    font-weight: bold;
+}
+
+.leonp-movie-form-group {
+    margin-top: 5px;
+    margin-right: 20px;
+}
+
+.leonp-form-group:first-child {
+    margin-left: 10px;
+}
+
+.leonp-movie-input, .leonp-movie-textarea {
+    width: 100%;
+}
+
+.leonp-movie-input-wrapper {
+    display: flex;
+}
+
+.leonp-movie-input-wrapper > div {
+    flex: 1;
+}
